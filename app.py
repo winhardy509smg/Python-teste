@@ -1,10 +1,16 @@
-from flask import Flask
+from flask_testing import TestCase
+from app import app
 
-app = Flask(__name__)
+class AppTestCase(TestCase):
+    def create_app(self):
+        app.config['TESTING'] = True
+        return app
 
-@app.route("/")
-def hello():
-    return "Hello World"
+    def test_home_route(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Hello World", response.data)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    import unittest
+    unittest.main()
